@@ -58,7 +58,16 @@ export class WindowControls extends React.Component<{}, IWindowControlState> {
   }
 
   private onMinimize = () => {
+    this.onMinimizeMouseLeave()
     remote.getCurrentWindow().minimize()
+  }
+
+  private onMinimizeHover = () => {
+    this.minimizeButton!.classList.add('hover')
+  }
+
+  private onMinimizeMouseLeave = () => {
+    this.minimizeButton!.classList.remove('hover')
   }
 
   private onMaximize = () => {
@@ -73,6 +82,8 @@ export class WindowControls extends React.Component<{}, IWindowControlState> {
     remote.getCurrentWindow().close()
   }
 
+  private minimizeButton: HTMLButtonElement | null = null
+
   private renderButton(
     name: string,
     onClick: React.EventHandler<React.MouseEvent<any>>,
@@ -80,6 +91,7 @@ export class WindowControls extends React.Component<{}, IWindowControlState> {
   ) {
     const className = classNames('window-control', name)
     const title = name[0].toUpperCase() + name.substring(1)
+    const minimize = name === 'minimize'
 
     return (
       <button
@@ -88,6 +100,9 @@ export class WindowControls extends React.Component<{}, IWindowControlState> {
         tabIndex={-1}
         className={className}
         onClick={onClick}
+        ref={minimize ? node => this.minimizeButton = node : undefined}
+        onMouseEnter={minimize ? this.onMinimizeHover : undefined}
+        onMouseLeave={minimize ? this.onMinimizeMouseLeave : undefined}
       >
         <svg aria-hidden="true" version="1.1" width="10" height="10">
           <path d={path} />
